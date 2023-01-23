@@ -9,6 +9,7 @@ namespace PyForm
     {
         public delegate void TextSetterDelegate(string text);
         public TextSetterDelegate _delegate;
+        public event EventHandler Awake;
         public Form1()
         {
             InitializeComponent();
@@ -24,12 +25,23 @@ namespace PyForm
             label1.Text = text;
         }
 
+        protected virtual void OnAwake(EventArgs e)
+        {
+            EventHandler handler = Awake;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+
         public void run_cmd()
         {
             var t = Task.Factory.StartNew(() => {
                 set_text("Sleeping");
                 Thread.Sleep(1000);
                 set_text("back from sleep " + Thread.CurrentThread.ManagedThreadId);
+                OnAwake(EventArgs.Empty);
             });
         }
 

@@ -26,6 +26,7 @@ class FormsApplication:
 
     def result_handler(self, sender, args):
         print("Python result handler called")
+        self.cognex_ready.set()
 
     def ready_to_work(self, sender, args):
         print("window ready handler called")
@@ -33,6 +34,7 @@ class FormsApplication:
         self.cognex_ready.set()
         
     def work(self):
+        self.cognex_ready.clear()
         self.win_form.run_cmd()
 
     def app_thread(self, arg):
@@ -54,15 +56,14 @@ class FormsApplication:
 if __name__ == "__main__":
     app = FormsApplication()
     print("app created")
-    app.cognex_ready.wait()
-    print("app ready to work")
     while True:
-        
+        app.cognex_ready.wait()
+        print("app ready to work")
         user_txt = input("Enter text to send to form: ")
         print(f"Sending {user_txt} to form")
         if user_txt == "x":
             break
         else:
-           app.work()
+            app.work()
     app.close()
     app.join()
